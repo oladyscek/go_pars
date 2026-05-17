@@ -45,25 +45,44 @@ func unaryLexer(input []string) []string {
 		"+": {}, "-": {}, "*": {}, "/": {},
 		"(": {}, "^": {},
 	}
-	for i < len(input) { 
+	for i < len(input) {
 		if i == 0 && input[i] == "-" { // if first is minus => unar
-			var sb strings.Builder 
+			var sb strings.Builder
 			sb.WriteString("-") // building a new token
 			sb.WriteString(input[i+1])
 			sls = append(sls, sb.String()) // add new token
-			i += 2 // +2 because index 0 and 1 are the unary minus and the number
-		} else { // if index is not 0
-			if _, ok := unary[input[i-1]]; input[i] == "-" && ok { // if minus and token before in unary triggers 
+			i += 2  // +2 because index 0 and 1 are the unary minus and the number
+			continue // go to next token
+		}
+		if i > 0 && input[i] == "-" { // index could be still 0 and [input[i-1]] will end with an error
+			if _, ok := unary[input[i-1]]; ok { // if minus and token before in unary triggers
 				var sb strings.Builder
 				sb.WriteString("-") // building a new token
 				sb.WriteString(input[i+1])
 				sls = append(sls, sb.String()) // add new token
 				i += 2
-			} else { // if num just add and go to next token
-				sls = append(sls, input[i]) 
-				i++
+				continue // go to next token
+			}
+		} 
+		sls = append(sls, input[i]) // if num just add and go to next token
+		i++
+
+	}
+	ind := 0
+	res := make([]string, 0, len(sls)) // new slice without unary pluses
+	for ind < len(sls) {
+		if ind == 0 && sls[ind] == "+" {
+			ind++ // if unary plus just skip it, unary pluses are trash
+			continue // go to next token
+		}
+		if ind > 0 && sls[ind] == "+" { // index could be still 0 and [sls[ind-1]] will end with an error
+			if _, ok := unary[sls[ind-1]]; ok { // if unary somwhere in the middle in the tokens
+				ind++ // skip it again
+				continue
 			}
 		}
+		res = append(res, sls[ind])
+		ind++
 	}
-	return sls
+	return res
 }
