@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func not_main() {
+func main() {
 	given := bufio.NewScanner(os.Stdin)
 	fmt.Println("введите выражение")
 	given.Scan()
