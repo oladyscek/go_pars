@@ -1,6 +1,6 @@
 package main
 
-type Node interface {
+type Node interface { 
 	Eval() float64
 }
 
