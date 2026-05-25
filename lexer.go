@@ -46,7 +46,7 @@ func unaryLexer(input []string) []string {
 		"(": {}, "^": {},
 	}
 	for i < len(input) {
-		if i == 0 && input[i] == "-" { // if first is minus => unar
+		if i == 0 && input[i] == "-" { // if first is minus => unary
 			var sb strings.Builder
 			sb.WriteString("-") // building a new token
 			sb.WriteString(input[i+1])

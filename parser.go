@@ -58,15 +58,30 @@ func parse(input []string) Node {
 		}
 	}
 
-	if input[0] == "(" && input[len(input)-1] == ")" { // could be like (2+2), i know it mean that user is fool but we should parse it
-		return parse(input[1 : len(input)-1]) // P.S. BUG!! case (2+3)+(4+5) will crash
+	depth := 0
+	if input[0] == "(" && input[len(input)-1] == ")" { // it could be case (2+2), we need to check it
+		for i, val := range input {
+			if val == "(" {
+				depth++ // if the opening bracket we are inside brackets
+				continue
+			}
+			if val == ")" {
+				depth--
+				if depth == 0 { // if we are not in brackets
+					if i == len(input)-1 { // if we are not in brackets and there is end
+						return parse(input[1 : len(input)-1]) // if that case we throw out brackets. (2+2) => 2+2
+					}
+					break // if we get out of brackets and it's not end, it's not our case 
+				}
+			}
+		}
 	}
 
-	root_ind := root(input) // find the root
-	left_node := parse(input[:root_ind]) // parse left operand recursivly 
+	root_ind := root(input)                 // find the root
+	left_node := parse(input[:root_ind])    // parse left operand recursivly
 	right_node := parse(input[root_ind+1:]) // parse right operand recursivly
 
-	return BinaryExpr{ 
+	return BinaryExpr{
 		op:    input[root_ind],
 		Left:  left_node,
 		Right: right_node,
