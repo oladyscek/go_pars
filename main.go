@@ -8,7 +8,7 @@ import (
 
 func main() {
 	given := bufio.NewScanner(os.Stdin)
-	fmt.Println("введите выражение")
+	fmt.Println("enter expression (please)")
 	given.Scan()
 	input := given.Text()
 	tokens := lexer(input)

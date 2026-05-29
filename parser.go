@@ -83,12 +83,12 @@ func parse(input []string) Node {
 		}
 	}
 
-	if IsUselessSk(input) {
-		return parse(input[1 : len(input)-1])
+	if IsUselessSk(input) { // could be (2+2) and that will break everything
+		return parse(input[1 : len(input)-1]) // if that case just throw out useless brackets
 	}
 
 	root_ind := root(input)
-	if root_ind == -1 {
+	if root_ind == -1 { // if no root found 
 		panic("invalid expression")
 	}
 	switch input[root_ind] {
@@ -101,12 +101,12 @@ func parse(input []string) Node {
 	case "!":
 		return UnaryExpr{
 			op:      "!",
-			Operand: parse(input[:root_ind]),
+			Operand: parse(input[:root_ind]), // postfix operand 
 		}
 	case "√":
 		return UnaryExpr{
 			op:      "√",
-			Operand: parse(input[root_ind+1:]),
+			Operand: parse(input[root_ind+1:]), // prefix operand
 		}
 	}
 	panic("unknown operator")
