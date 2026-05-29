@@ -29,7 +29,7 @@ func root(input []string) int {
 	depth := 0 // operator in () is not root
 
 	for i, tok := range input {
-		if tok == "(" {
+		if tok == "(" { // if we are inside of brackets go untill we are out of them
 			depth++
 			continue
 		}
@@ -37,10 +37,10 @@ func root(input []string) int {
 			depth--
 			continue
 		}
-		if depth == 0 {
+		if depth == 0 { // if we are not in brackets 
 			if isOperator(tok) {
 				prec := pres(tok)       // pres of current operator
-				if prec <= lowestpres { // if lover
+				if prec <= lowestpres { // if lower
 					lowestpres = prec
 					root_pres = i
 				}
@@ -50,14 +50,10 @@ func root(input []string) int {
 	return root_pres
 }
 
-func parse(input []string) Node {
-	if len(input) == 1 { // if just 1 num return it
-		val, _ := strconv.ParseFloat(input[0], 64)
-		return Number{
-			Value: val,
-		}
+func IsUselessSk(input []string) bool {
+	if len(input) == 0 {
+		return false
 	}
-
 	depth := 0
 	if input[0] == "(" && input[len(input)-1] == ")" { // it could be case (2+2), we need to check it
 		for i, val := range input {
@@ -69,21 +65,49 @@ func parse(input []string) Node {
 				depth--
 				if depth == 0 { // if we are not in brackets
 					if i == len(input)-1 { // if we are not in brackets and there is end
-						return parse(input[1 : len(input)-1]) // if that case we throw out brackets. (2+2) => 2+2
+						return true // if that case we throw out brackets. (2+2) => 2+2
 					}
-					break // if we get out of brackets and it's not end, it's not our case 
+					return false // if we get out of brackets and it's not end, it's not our case
 				}
 			}
 		}
 	}
+	return false // if there is no opening bracket
+}
 
-	root_ind := root(input)                 // find the root
-	left_node := parse(input[:root_ind])    // parse left operand recursivly
-	right_node := parse(input[root_ind+1:]) // parse right operand recursivly
-
-	return BinaryExpr{
-		op:    input[root_ind],
-		Left:  left_node,
-		Right: right_node,
+func parse(input []string) Node {
+	if len(input) == 1 { // if just 1 num return it
+		val, _ := strconv.ParseFloat(input[0], 64)
+		return Number{
+			Value: val,
+		}
 	}
+
+	if IsUselessSk(input) {
+		return parse(input[1 : len(input)-1])
+	}
+
+	root_ind := root(input)
+	if root_ind == -1 {
+		panic("invalid expression")
+	}
+	switch input[root_ind] {
+	case "+", "-", "/", "*", "^":
+		return BinaryExpr{
+			op:    input[root_ind],
+			Left:  parse(input[:root_ind]),
+			Right: parse(input[root_ind+1:]),
+		}
+	case "!":
+		return UnaryExpr{
+			op:      "!",
+			Operand: parse(input[:root_ind]),
+		}
+	case "√":
+		return UnaryExpr{
+			op:      "√",
+			Operand: parse(input[root_ind+1:]),
+		}
+	}
+	panic("unknown operator")
 }
