@@ -8,8 +8,12 @@ func pres(op string) int {
 		return 1
 	case "*", "/": // have the higher pres
 		return 2
-	case "^", "!", "√": // have the highest pres
+	case "^": // have the highest pres
 		return 3
+	case "√":
+		return 4
+	case "!":
+		return 5
 	}
 	return 9999
 }

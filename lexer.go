@@ -89,7 +89,7 @@ func unaryLexer(input []string) []string {
 
 
 func lexer(input string) []string {
-	var tokens []string
+	tokens := make([]string, 0, len(input))
 	index := 0
 	if validLexer(input) == false {
 		return []string{"error"}

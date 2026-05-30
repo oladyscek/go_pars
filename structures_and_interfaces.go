@@ -8,11 +8,6 @@ type Number struct {
 	Value float64
 }
 
-type ExprNode struct {
-	Op       string
-	Children []Node
-}
-
 type BinaryExpr struct {
 	op    string
 	Left  Node

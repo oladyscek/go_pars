@@ -13,5 +13,6 @@ func main() {
 	input := given.Text()
 	tokens := lexer(input)
 	ast := parse(tokens)
-	fmt.Println(ast.Eval())
+	res := ast.Eval()
+	fmt.Println(res)
 }
